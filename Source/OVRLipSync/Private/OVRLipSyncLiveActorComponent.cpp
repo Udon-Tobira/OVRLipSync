@@ -26,6 +26,7 @@
 #include "AndroidPermissionCallbackProxy.h"
 #include "AndroidPermissionFunctionLibrary.h"
 #include "OVRLipSyncContextWrapper.h"
+#include "OVRLipSyncModule.h"
 #include "VoiceModule.h"
 #include "TimerManager.h"
 
