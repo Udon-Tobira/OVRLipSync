@@ -23,8 +23,10 @@
 
 #include "OVRLipSyncLiveActorComponent.h"
 
+#if PLATFORM_ANDROID
 #include "AndroidPermissionCallbackProxy.h"
 #include "AndroidPermissionFunctionLibrary.h"
+#endif
 #include "OVRLipSyncContextWrapper.h"
 #include "OVRLipSyncModule.h"
 #include "VoiceModule.h"
