@@ -25,7 +25,6 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AudioDecompress.h"
 #include "AudioDevice.h"
-#include "Sound/SoundWave.h"
 #include "Engine.h"
 #include "Framework/Commands/UIAction.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
@@ -34,6 +33,7 @@
 #include "Modules/ModuleManager.h"
 #include "OVRLipSyncContextWrapper.h"
 #include "OVRLipSyncFrame.h"
+#include "Sound/SoundWave.h"
 #include "Textures/SlateIcon.h"
 
 namespace
@@ -84,7 +84,14 @@ bool DecompressSoundWave(USoundWave *SoundWave)
 
 bool OVRLipSyncProcessSoundWave(const FAssetData &SoundWaveAsset, bool UseOfflineModel = false)
 {
-	auto ObjectPath = SoundWaveAsset.GetObjectPathString();
+	auto ObjectPath =
+#if UE_VERSION_OLDER_THAN(5, 3, 0)
+		SoundWaveAsset.ObjectPath.ToString()
+#else
+		SoundWaveAsset.GetObjectPathString()
+#endif
+		;
+
 	auto SoundWave = FindObject<USoundWave>(NULL, *ObjectPath);
 	if (!SoundWave)
 	{
@@ -203,7 +210,15 @@ TSharedRef<FExtender> OVRLipSyncContextMenuExtender(const TArray<FAssetData> &Se
 	TArray<FAssetData> SelectedSoundWaveAssets;
 	for (auto &Asset : SelectedAssets)
 	{
-		if (Asset.AssetClassPath.ToString().Contains(TEXT("SoundWave")))
+		const auto &AssetClassName =
+#if UE_VERSION_OLDER_THAN(5, 3, 0)
+			Asset.AssetClass
+#else
+			Asset.AssetClassPath
+#endif
+			;
+
+		if (AssetClassName.ToString().Contains(TEXT("SoundWave")))
 		{
 			SelectedSoundWaveAssets.Add(Asset);
 		}
