@@ -58,7 +58,7 @@ bool DecompressSoundWave(USoundWave *SoundWave)
 
 	AudioDevice->StopAllSounds(true);
 	auto OriginalDecompressionType = SoundWave->DecompressionType;
-	SoundWave->DecompressionType = DTYPE_Native;
+	SoundWave->DecompressionType = DTYPE_RealTime;
 
 	const auto RuntimeFormat =
 #if UE_VERSION_OLDER_THAN(5, 4, 0)
