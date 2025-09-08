@@ -31,6 +31,7 @@
 #include "OVRLipSyncModule.h"
 #include "VoiceModule.h"
 #include "TimerManager.h"
+#include "Logging/MessageLog.h"
 
 #include <Core.h>
 #include <algorithm>
@@ -126,9 +127,15 @@ void UOVRLipSyncActorComponent::PermissionCallback(const TArray<FString> &Permis
 void UOVRLipSyncActorComponent::StartVoiceCapture()
 {
 	VoiceCapture = FVoiceModule::Get().CreateVoiceCapture(DefaultDeviceName, SampleRate, 1);
-	if (!VoiceCapture)
+	if (!ensureMsgf(VoiceCapture.IsValid(), TEXT("Failed to create VoiceCapture. Please check that Voice module is enabled in DefaultEngine.ini with [Voice] bEnabled=True")))
 	{
-		UE_LOG(LogOvrLipSync, Error, TEXT("Can't create voice capture."));
+		UE_LOG(LogOvrLipSync, Error, TEXT("Can't create voice capture. Please check that Voice module is enabled in DefaultEngine.ini with [Voice] bEnabled=True"));
+		
+		// Display message in editor message log for better visibility
+#if WITH_EDITOR
+		FMessageLog("PIE").Error(FText::FromString(TEXT("OVRLipSync: Failed to create VoiceCapture. Please add '[Voice]' section with 'bEnabled=True' to your DefaultEngine.ini file.")));
+#endif
+		
 		return;
 	}
 	else
